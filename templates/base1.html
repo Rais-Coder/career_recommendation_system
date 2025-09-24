@@ -1,0 +1,494 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Career Recommendations{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="{{ url_for('index') }}">
+                    <i class="fas fa-chart-line"></i> CareerAI
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('get_recommendations') }}" class="nav-link">Recommendations</a>
+                <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Smart Career Recommendations. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
+
+<!-- templates/dashboard.html -->
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Smart Career Recommendations{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <h1><i class="fas fa-tachometer-alt"></i> Welcome back, {{ user.name }}!</h1>
+        <p>Here's your career development overview</p>
+    </div>
+
+    <!-- Dashboard Statistics -->
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div class="stat-number">{{ skills|length }}</div>
+            <div class="stat-label">Skills Identified</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <div class="stat-number">{{ recommendations|length }}</div>
+            <div class="stat-label">Career Matches</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="stat-number">{{ user.education_level or 'Not Set' }}</div>
+            <div class="stat-label">Education Level</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-number">{{ user.years_experience or 0 }}</div>
+            <div class="stat-label">Years Experience</div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Skills Overview -->
+        <div class="dashboard-card">
+            <h3><i class="fas fa-cogs"></i> Your Skills</h3>
+            <div class="skills-container">
+                {% for skill in skills[:10] %}
+                <div class="skill-item">
+                    <div class="skill-info">
+                        <span class="skill-name">{{ skill.skill_name }}</span>
+                        <span class="skill-category">{{ skill.category }}</span>
+                    </div>
+                    <div class="skill-level">
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 60%;"></div>
+
+                        </div>
+                        <span class="skill-level-text">{{ skill.proficiency_level }}/5</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="#" class="btn btn-outline">View All Skills</a>
+        </div>
+
+        <!-- Recent Recommendations -->
+        <div class="dashboard-card">
+            <h3><i class="fas fa-star"></i> Top Career Matches</h3>
+            <div class="recommendations-preview">
+                {% for rec in recommendations[:3] %}
+                <div class="recommendation-item">
+                    <div class="rec-header">
+                        <h4>{{ rec.career_title }}</h4>
+                        <span class="match-score">{{ (rec.match_score * 100)|round }}% Match</span>
+                    </div>
+                    <p class="rec-industry">{{ rec.industry }}</p>
+                    <p class="rec-salary">${{ "{:,}".format(rec.avg_salary_min) }} - ${{ "{:,}".format(rec.avg_salary_max) }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{{ url_for('get_recommendations') }}" class="btn btn-primary">View All Recommendations</a>
+        </div>
+
+        <!-- Progress Tracking -->
+        <div class="dashboard-card full-width">
+            <h3><i class="fas fa-chart-line"></i> Career Development Progress</h3>
+            <div class="progress-tracking">
+                <div class="progress-item">
+                    <div class="progress-info">
+                        <span class="progress-label">Profile Completion</span>
+                        <span class="progress-percentage">85%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%;"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-item">
+                    <div class="progress-info">
+                        <span class="progress-label">Skills Assessment</span>
+                        <span class="progress-percentage">92%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 92%;"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-item">
+                    <div class="progress-info">
+                        <span class="progress-label">Career Exploration</span>
+                        <span class="progress-percentage">67%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 67%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Items -->
+        <div class="dashboard-card">
+            <h3><i class="fas fa-tasks"></i> Recommended Actions</h3>
+            <div class="action-items">
+                <div class="action-item">
+                    <i class="fas fa-upload"></i>
+                    <div class="action-content">
+                        <h4>Update Resume</h4>
+                        <p>Upload your latest resume to improve recommendations</p>
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <i class="fas fa-book"></i>
+                    <div class="action-content">
+                        <h4>Skill Development</h4>
+                        <p>Learn Python to increase your match score by 15%</p>
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <i class="fas fa-network-wired"></i>
+                    <div class="action-content">
+                        <h4>Network Building</h4>
+                        <p>Connect with professionals in Data Science</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Insights -->
+        <div class="dashboard-card">
+            <h3><i class="fas fa-chart-bar"></i> Market Insights</h3>
+            <div class="market-insights">
+                <div class="insight-item trending">
+                    <span class="insight-icon"><i class="fas fa-arrow-up"></i></span>
+                    <div class="insight-content">
+                        <span class="insight-title">AI/ML Skills</span>
+                        <span class="insight-desc">+25% demand growth</span>
+                    </div>
+                </div>
+                
+                <div class="insight-item stable">
+                    <span class="insight-icon"><i class="fas fa-minus"></i></span>
+                    <div class="insight-content">
+                        <span class="insight-title">Web Development</span>
+                        <span class="insight-desc">Stable demand</span>
+                    </div>
+                </div>
+                
+                <div class="insight-item hot">
+                    <span class="insight-icon"><i class="fas fa-fire"></i></span>
+                    <div class="insight-content">
+                        <span class="insight-title">Cloud Computing</span>
+                        <span class="insight-desc">High demand</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- templates/recommendations.html -->
+{% extends "base.html" %}
+
+{% block title %}Career Recommendations{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="recommendations-header">
+        <h1><i class="fas fa-star"></i> Your Career Recommendations</h1>
+        <p>Personalized career suggestions based on your profile and skills</p>
+    </div>
+
+    <div class="filters-section">
+        <div class="filter-group">
+            <label for="industryFilter">Filter by Industry:</label>
+            <select id="industryFilter" class="filter-select">
+                <option value="">All Industries</option>
+                <option value="Technology">Technology</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Finance">Finance</option>
+                <option value="Education">Education</option>
+                <option value="Marketing">Marketing</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="salaryFilter">Minimum Salary:</label>
+            <select id="salaryFilter" class="filter-select">
+                <option value="">Any Salary</option>
+                <option value="50000">$50,000+</option>
+                <option value="75000">$75,000+</option>
+                <option value="100000">$100,000+</option>
+                <option value="125000">$125,000+</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="matchFilter">Minimum Match Score:</label>
+            <select id="matchFilter" class="filter-select">
+                <option value="">Any Match</option>
+                <option value="0.6">60%+</option>
+                <option value="0.7">70%+</option>
+                <option value="0.8">80%+</option>
+                <option value="0.9">90%+</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="recommendationsList" class="recommendations-list">
+        {% for rec in recommendations %}
+        <div class="recommendation-card" data-industry="{{ rec.industry }}" data-salary="{{ rec.avg_salary_min }}" data-match="{{ rec.match_score }}">
+            <div class="rec-header">
+                <div class="rec-title-section">
+                    <h3>{{ rec.career_title }}</h3>
+                    <p class="rec-industry">{{ rec.industry }}</p>
+                </div>
+                <div class="rec-match-section">
+                    <div class="match-score">{{ (rec.match_score * 100)|round }}% Match</div>
+                    <div class="rec-actions">
+                        <button class="btn-icon" onclick="toggleFavorite('{{ rec.career_id }}')" title="Add to Favorites">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <button class="btn-icon" onclick="shareRecommendation('{{ rec.career_id }}')" title="Share">
+                            <i class="fas fa-share"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rec-content">
+                <div class="rec-description">
+                    <p>{{ rec.description }}</p>
+                </div>
+
+                <div class="rec-details">
+                    <div class="detail-group">
+                        <span class="detail-label"><i class="fas fa-dollar-sign"></i> Salary Range:</span>
+                        <span class="detail-value">${{ "{:,}".format(rec.avg_salary_min) }} - ${{ "{:,}".format(rec.avg_salary_max) }}</span>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <span class="detail-label"><i class="fas fa-chart-line"></i> Growth Rate:</span>
+                        <span class="detail-value">{{ (rec.growth_rate * 100)|round }}% annually</span>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <span class="detail-label"><i class="fas fa-signal"></i> Market Demand:</span>
+                        <span class="detail-value demand-{{ 'high' if rec.demand_score > 0.7 else 'medium' if rec.demand_score > 0.4 else 'low' }}">
+                            {{ 'High' if rec.demand_score > 0.7 else 'Medium' if rec.demand_score > 0.4 else 'Low' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="match-breakdown">
+                    <h4><i class="fas fa-chart-pie"></i> Match Breakdown</h4>
+                    <div class="breakdown-items">
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Skills Match</span>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" style="width: 72%;"></div>
+
+                            </div>
+                            <span class="breakdown-percentage">{{ (rec.skill_score * 100)|round }}%</span>
+                        </div>
+                        
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Education Fit</span>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" style="width: 75%;"></div>
+
+                            </div>
+                            <span class="breakdown-percentage">{{ (rec.education_score * 100)|round }}%</span>
+                        </div>
+                        
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Experience Level</span>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" style="width: 72%;"></div>
+
+                            </div>
+                            <span class="breakdown-percentage">{{ (rec.experience_score * 100)|round }}%</span>
+                        </div>
+                    </div>
+                </div>
+
+                {% if rec.skill_gaps %}
+                <div class="skill-gaps">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Skills to Develop</h4>
+                    <div class="skill-gap-list">
+                        {% for gap in rec.skill_gaps[:5] %}
+                        <span class="skill-gap-tag">{{ gap }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if rec.learning_path %}
+                <div class="learning-path">
+                    <h4><i class="fas fa-graduation-cap"></i> Learning Path</h4>
+                    <div class="learning-steps">
+                        {% for step in rec.learning_path[:3] %}
+                        <div class="learning-step">
+                            <div class="step-priority priority-{{ step.priority.lower() }}">
+                                {{ step.priority }}
+                            </div>
+                            <div class="step-content">
+                                <h5>{{ step.skill }}</h5>
+                                <p>Current: {{ step.current_level }}/5 → Target: {{ step.required_level }}/5</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="rec-reasoning">
+                    <h4><i class="fas fa-lightbulb"></i> Why This Match?</h4>
+                    <p>{{ rec.reasoning }}</p>
+                </div>
+            </div>
+
+            <div class="rec-footer">
+                <button class="btn btn-primary" onclick="exploreCareer('{{ rec.career_id }}')">
+                    <i class="fas fa-search"></i> Explore Career
+                </button>
+                <button class="btn btn-outline" onclick="viewLearningPath('{{ rec.career_id }}')">
+                    <i class="fas fa-route"></i> View Learning Path
+                </button>
+                <button class="btn btn-outline" onclick="findJobs('{{ rec.career_title }}')">
+                    <i class="fas fa-briefcase"></i> Find Jobs
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if not recommendations %}
+    <div class="no-recommendations">
+        <div class="no-rec-icon">
+            <i class="fas fa-search"></i>
+        </div>
+        <h3>No Recommendations Found</h3>
+        <p>We couldn't generate recommendations. Please complete your profile assessment.</p>
+        <a href="{{ url_for('assessment') }}" class="btn btn-primary">Complete Assessment</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Filter functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const industryFilter = document.getElementById('industryFilter');
+        const salaryFilter = document.getElementById('salaryFilter');
+        const matchFilter = document.getElementById('matchFilter');
+        
+        function applyFilters() {
+            const industryValue = industryFilter.value;
+            const salaryValue = parseInt(salaryFilter.value) || 0;
+            const matchValue = parseFloat(matchFilter.value) || 0;
+            
+            const cards = document.querySelectorAll('.recommendation-card');
+            
+            cards.forEach(card => {
+                const cardIndustry = card.dataset.industry;
+                const cardSalary = parseInt(card.dataset.salary);
+                const cardMatch = parseFloat(card.dataset.match);
+                
+                const industryMatch = !industryValue || cardIndustry === industryValue;
+                const salaryMatch = !salaryValue || cardSalary >= salaryValue;
+                const matchScoreMatch = !matchValue || cardMatch >= matchValue;
+                
+                if (industryMatch && salaryMatch && matchScoreMatch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        industryFilter.addEventListener('change', applyFilters);
+        salaryFilter.addEventListener('change', applyFilters);
+        matchFilter.addEventListener('change', applyFilters);
+    });
+    
+    // Interactive functions
+    function toggleFavorite(careerId) {
+        // Toggle favorite status
+        console.log('Toggle favorite for career:', careerId);
+    }
+    
+    function shareRecommendation(careerId) {
+        // Share recommendation
+        if (navigator.share) {
+            navigator.share({
+                title: 'Career Recommendation',
+                text: 'Check out this career recommendation!',
+                url: window.location.href
+            });
+        }
+    }
+    
+    function exploreCareer(careerId) {
+        // Show detailed career information
+        fetch(`/api/career_details/${careerId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Display career details modal
+                console.log('Career details:', data);
+            });
+    }
+    
+    function viewLearningPath(careerId) {
+        // Show learning path details
+        console.log('View learning path for career:', careerId);
+    }
+    
+    function findJobs(careerTitle) {
+        // Open job search in new tab
+        const searchQuery = encodeURIComponent(careerTitle);
+        window.open(`https://www.linkedin.com/jobs/search/?keywords=${searchQuery}`, '_blank');
+    }
+</script>
+{% endblock %}

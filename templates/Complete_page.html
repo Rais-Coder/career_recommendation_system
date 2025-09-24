@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Career Recommendation System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #ff7b7b, #ff9999);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 5px 12px;
+            margin: 3px;
+            border-radius: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .recommendation-card {
+            border-left: 4px solid #667eea;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-card:hover {
+            border-left-color: #764ba2;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .match-score {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .assessment-section {
+            margin-bottom: 30px;
+        }
+
+        .assessment-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .question-group {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .scale-input {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .scale-input input[type="range"] {
+            flex: 1;
+            margin: 0 15px;
+        }
+
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .file-upload {
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            background: #f0f2ff;
+            border-color: #764ba2;
+        }
+
+        .file-upload.dragover {
+            background: #e8ebff;
+            border-color: #5a67d8;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+            color: #666;
+            position: relative;
+        }
+
+        .step.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 20px;
+            height: 2px;
+            background: #e0e0e0;
+            margin-left: 10px;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-chart-line"></i> Smart Career Recommendations</h1>
+            <p>AI-Powered Career Guidance System</p>
+        </div>
+
+        <!-- Registration Form -->
+        <div id="registrationForm" class="card">
+            <h2><i class="fas fa-user-plus"></i> Get Started</h2>
+            <p>Tell us about yourself to receive personalized career recommendations</p>
+
+            <form id="userRegistration">
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="name"><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="age"><i class="fas fa-calendar"></i> Age</label>
+                        <input type="number" id="age" name="age" min="16" max="80">
+                    </div>
+                    <div class="form-group">
+                        <label for="education"><i class="fas fa-graduation-cap"></i> Education Level</label>
+                        <select id="education" name="education_level">
+                            <option value="">Select Education Level</option>
+                            <option value="High School">High School</option>
+                            <option value="Diploma">Diploma</option>
+                            <option value="Associate">Associate Degree</option>
+                            <option value="Bachelor">Bachelor's Degree</option>
+                            <option value="Master">Master's Degree</option>
+                            <option value="PhD">PhD</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="currentField"><i class="fas fa-briefcase"></i> Current Field (Optional)</label>
+                        <input type="text" id="currentField" name="current_field"
+                            placeholder="e.g., Software Development">
+                    </div>
+                    <div class="form-group">
+                        <label for="experience"><i class="fas fa-clock"></i> Years of Experience</label>
+                        <input type="number" id="experience" name="years_experience" min="0" max="50" value="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location"><i class="fas fa-map-marker-alt"></i> Location</label>
+                    <input type="text" id="location" name="location" placeholder="City, Country">
+                </div>
+
+                <button type="submit" class="btn">
+                    <i class="fas fa-arrow-right"></i> Continue to Assessment
+                </button>
+            </form>
+        </div>
+
+        <!-- Assessment Form -->
+        <div id="assessmentForm" class="card" style="display: none;">
+            <div class="step-indicator">
+                <div class="step completed">1</div>
+                <div class="step active">2</div>
+                <div class="step">3</div>
+                <div class="step">4</div>
+            </div>
+
+            <h2><i class="fas fa-clipboard-check"></i> Career Assessment</h2>
+            <p>Answer these questions to help us understand your preferences and goals</p>
+
+            <form id="careerAssessment">
+                <!-- Personality Assessment -->
+                <div class="assessment-section">
+                    <h3><i class="fas fa-brain"></i> Personality & Work Style</h3>
+
+                    <div class="question-group">
+                        <label>I prefer working in teams rather than alone</label>
+                        <div class="scale-input">
+                            <span>Strongly Disagree</span>
+                            <input type="range" name="teamwork_preference" min="1" max="5" value="3" class="slider">
+                            <span>Strongly Agree</span>
+                        </div>
+                        <div class="scale-labels">
+                            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label>I enjoy taking on leadership responsibilities</label>
+                        <div class="scale-input">
+                            <span>Strongly Disagree</span>
+                            <input type="range" name="leadership_preference" min="1" max="5" value="3">
+                            <span>Strongly Agree</span>
+                        </div>
+                        <div class="scale-labels">
+                            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label>I like having clear structure and deadlines</label>
+                        <div class="scale-input">
+                            <span>Strongly Disagree</span>
+                            <input type="range" name="structure_preference" min="1" max="5" value="3">
+                            <span>Strongly Agree</span>
+                        </div>
+                        <div class="scale-labels">
+                            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interest Assessment -->
+                <div class="assessment-section">
+                    <h3><i class="fas fa-heart"></i> Interests & Aptitudes</h3>
+
+                    <div class="question-group">
+                        <label>How interested are you in analyzing data and finding patterns?</label>
+                        <div class="scale-input">
+                            <span>Not Interested</span>
+                            <input type="range" name="data_analysis_interest" min="1" max="5" value="3">
+                            <span>Very Interested</span>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label>Do you enjoy creative problem-solving and innovation?</label>
+                        <div class="scale-input">
+                            <span>Not Interested</span>
+                            <input type="range" name="creative_problem_solving" min="1" max="5" value="3">
+                            <span>Very Interested</span>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label>How much do you like helping and mentoring others?</label>
+                        <div class="scale-input">
+                            <span>Not Interested</span>
+                            <input type="range" name="helping_others" min="1" max="5" value="3">
+                            <span>Very Interested</span>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label>Are you interested in building or creating things?</label>
+                        <div class="scale-input">
+                            <span>Not Interested</span>
+                            <input type="range" name="building_creating" min="1" max="5" value="3">
+                            <span>Very Interested</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Career Priorities -->
+                <div class="assessment-section">
+                    <h3><i class="fas fa-target"></i> Career Priorities</h3>
+
+                    <div class="question-group">
+                        <label>How important is work-life balance to you?</label>
+                        <div class="scale-input">
+                            <span>Not Important</span>
+                            <input type="range" name="work_life_balance" min="1" max="5" value="3">
+                            <span>Very Important</span>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label>How important is salary to you?</label>
+                        <div class="scale-input">
+                            <span>Not Important</span>
+                            <input type="range" name="salary_importance" min="1" max="5" value="3">
+                            <span>Very Important</span>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label>How comfortable are you with taking risks?</label>
+                        <div class="scale-input">
+                            <span>Risk Averse</span>
+                            <input type="range" name="risk_tolerance" min="1" max="5" value="3">
+                            <span>Risk Taker</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Career Goals -->
+                <div class="assessment-section">
+                    <h3><i class="fas fa-bullseye"></i> Career Goals</h3>
+
+                    <div class="form-group">
+                        <label>What are your main career goals? (Optional)</label>
+                        <textarea name="career_goals" rows="3"
+                            placeholder="Describe your career aspirations, what you want to achieve..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-tags"></i> Select your areas of interest (check all that apply):</label>
+                        <div class="grid">
+                            <label><input type="checkbox" name="interests" value="Technology"> Technology</label>
+                            <label><input type="checkbox" name="interests" value="Business"> Business</label>
+                            <label><input type="checkbox" name="interests" value="Creative"> Creative Arts</label>
+                            <label><input type="checkbox" name="interests" value="Healthcare"> Healthcare</label>
+                            <label><input type="checkbox" name="interests" value="Education"> Education</label>
+                            <label><input type="checkbox" name="interests" value="Finance"> Finance</label>
+                            <label><input type="checkbox" name="interests" value="Marketing"> Marketing</label>
+                            <label><input type="checkbox" name="interests" value="Research"> Research</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button type="button" class="btn btn-secondary" onclick="showSection('registrationForm')">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-arrow-right"></i> Continue to Resume Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Resume Upload -->
+        <div id="resumeUpload" class="card" style="display: none;">
+            <div class="step-indicator">
+                <div class="step completed">1</div>
+                <div class="step completed">2</div>
+                <div class="step active">3</div>
+                <div class="step">4</div>
+            </div>
+
+            <h2><i class="fas fa-upload"></i> Upload Your Resume</h2>
+            <p>Upload your resume to automatically extract your skills and experience</p>
+
+            <form id="resumeUploadForm">
+                <div class="file-upload" id="fileUpload">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Drag & Drop your resume here</h3>
+                    <p>or click to browse files</p>
+                    <p><small>Supported formats: PDF, DOC, DOCX (Max 16MB)</small></p>
+                    <input type="file" id="resumeFile" name="my_custom_resume_field" accept=".pdf,.doc,.docx" style="display: none;">
+                </div>
+
+                <div id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <p id="uploadStatus">Uploading...</p>
+                </div>
+
+                <div id="extractedSkills" style="display: none;">
+                    <h3><i class="fas fa-cogs"></i> Extracted Skills</h3>
+                    <div id="skillsList"></div>
+                </div>
+
+                <div class="navigation">
+                    <button type="button" class="btn btn-secondary" onclick="showSection('assessmentForm')">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button type="button" class="btn" onclick="skipResume()">
+                        <i class="fas fa-arrow-right"></i> Skip & Continue
+                    </button>
+                    <button type="submit" class="btn" id="continueAfterUpload" style="display: none;">
+                        <i class="fas fa-arrow-right"></i> Get Recommendations
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loadingScreen" class="card" style="display: none;">
+            <div class="step-indicator">
+                <div class="step completed">1</div>
+                <div class="step completed">2</div>
+                <div class="step completed">3</div>
+                <div class="step active">4</div>
+            </div>
+
+            <div class="loading">
+                <div class="spinner"></div>
+                <h2>Analyzing Your Profile</h2>
+                <p id="loadingText">Processing your information and generating personalized recommendations...</p>
+            </div>
+        </div>
+
+        <!-- Recommendations Display -->
+        <div id="recommendationsDisplay" class="card" style="display: none;">
+            <h2><i class="fas fa-star"></i> Your Career Recommendations</h2>
+            <p>Based on your profile, skills, and preferences, here are the best career matches for you:</p>
+
+            <div id="recommendationsList"></div>
+
+            <div class="navigation">
+                <button type="button" class="btn" onclick="location.reload()">
+                    <i class="fas fa-redo"></i> Start Over
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="showDashboard()">
+                    <i class="fas fa-tachometer-alt"></i> View Dashboard
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboardSection" class="card" style="display: none;">
+            <div class="header">
+                <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+                <p>Welcome to your career dashboard!</p>
+            </div>
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-careers">0</div>
+                    <div class="stat-label">Careers Matched</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-skills">0</div>
+                    <div class="stat-label">Skills Identified</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-completed">0</div>
+                    <div class="stat-label">Assessments Completed</div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button type="button" class="btn" onclick="location.reload()">
+                    <i class="fas fa-redo"></i> Start Over
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="showSection('recommendationsDisplay')">
+                    <i class="fas fa-star"></i> Back to Recommendations
+                </button>
+            </div>
+        </div>
+
+        <!-- Error Display -->
+        <div id="errorDisplay" class="alert alert-error" style="display: none;">
+            <strong>Error:</strong> <span id="errorMessage"></span>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let userId = null;
+        let uploadedResume = false;
+
+        // Show specific section
+        function showSection(sectionId) {
+            const sections = [
+                'registrationForm',
+                'assessmentForm',
+                'resumeUpload',
+                'loadingScreen',
+                'recommendationsDisplay',
+                'dashboardSection' // <-- add this
+            ];
+            sections.forEach(id => {
+                document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+            });
+        }
+
+        // Show error message
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorDisplay').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('errorDisplay').style.display = 'none';
+            }, 5000);
+        }
+
+        // Registration form submission
+        document.getElementById('userRegistration').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const userData = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    userId = result.user_id;
+                    showSection('assessmentForm');
+                    currentStep = 2;
+                } else {
+                    showError(result.error || 'Registration failed');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        });
+
+        // Assessment form submission
+        document.getElementById('careerAssessment').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!userId) {
+                showError('Please complete registration first');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const assessmentData = {};
+
+            // Process form data
+            for (let [key, value] of formData.entries()) {
+                if (key === 'interests') {
+                    if (!assessmentData.interests) assessmentData.interests = [];
+                    assessmentData.interests.push(value);
+                } else {
+                    assessmentData[key] = value;
+                }
+            }
+
+            // Convert numeric values
+            const numericFields = [
+                'teamwork_preference', 'leadership_preference', 'structure_preference',
+                'data_analysis_interest', 'creative_problem_solving', 'helping_others',
+                'building_creating', 'work_life_balance', 'salary_importance', 'risk_tolerance'
+            ];
+
+            numericFields.forEach(field => {
+                if (assessmentData[field]) {
+                    assessmentData[field] = parseInt(assessmentData[field]);
+                }
+            });
+
+            // Rename work_life_balance to work_life_balance_priority for backend
+            if (assessmentData['work_life_balance']) {
+                assessmentData['work_life_balance_priority'] = assessmentData['work_life_balance'];
+                delete assessmentData['work_life_balance'];
+            }
+
+            try {
+                const response = await fetch('/submit_assessment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(assessmentData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSection('resumeUpload');
+                    currentStep = 3;
+                } else {
+                    showError(result.error || 'Assessment submission failed');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        });
+
+        // File upload handling
+        const fileUpload = document.getElementById('fileUpload');
+        const resumeFile = document.getElementById('resumeFile');
+
+        fileUpload.addEventListener('click', () => {
+            resumeFile.click();
+        });
+
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.classList.add('dragover');
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.classList.remove('dragover');
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.classList.remove('dragover');
+
+            if (e.dataTransfer.files.length > 0) {
+                resumeFile.files = e.dataTransfer.files;
+                uploadResume();
+            }
+        });
+
+        resumeFile.addEventListener('change', uploadResume);
+
+        // Resume upload function
+        async function uploadResume() {
+            const file = resumeFile.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('my_custom_resume_field', file);
+
+            document.getElementById('uploadProgress').style.display = 'block';
+            document.getElementById('uploadStatus').textContent = 'Uploading and analyzing resume...';
+
+            try {
+                const response = await fetch('/process_resume', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    uploadedResume = true;
+                    displayExtractedSkills(result.skills);
+                    document.getElementById('uploadProgress').style.display = 'none';
+                    document.getElementById('continueAfterUpload').style.display = 'inline-block';
+                } else {
+                    showError(result.error || 'Resume processing failed');
+                    document.getElementById('uploadProgress').style.display = 'none';
+                }
+            } catch (error) {
+                showError('Upload error: ' + error.message);
+                document.getElementById('uploadProgress').style.display = 'none';
+            }
+        }
+        // Display extracted skills
+        function displayExtractedSkills(skills) {
+            const skillsList = document.getElementById('skillsList');
+            skillsList.innerHTML = '';
+            document.getElementById('extractedSkills').style.display = 'block';
+            skills.forEach(skill => {
+                const skillTag = document.createElement('span');
+                skillTag.className = 'skill-tag';
+                skillTag.textContent = skill;
+                skillsList.appendChild(skillTag);
+            });
+        }
+
+        // Skip resume upload
+        function skipResume() {
+            generateRecommendations();
+        }
+
+        // Continue after upload
+        document.getElementById('continueAfterUpload').addEventListener('click', generateRecommendations);
+
+        // Generate recommendations
+        async function generateRecommendations() {
+            showSection('loadingScreen');
+            currentStep = 4;
+
+            // Simulate processing steps
+            const steps = [
+                'Analyzing your skills and experience...',
+                'Matching with career database...',
+                'Calculating compatibility scores...',
+                'Generating personalized recommendations...',
+                'Preparing your results...'
+            ];
+
+            let stepIndex = 0;
+            const stepInterval = setInterval(() => {
+                if (stepIndex < steps.length) {
+                    document.getElementById('loadingText').textContent = steps[stepIndex];
+                    stepIndex++;
+                } else {
+                    clearInterval(stepInterval);
+                }
+            }, 1000);
+
+            try {
+                const response = await fetch('/get_recommendations');
+                const text = await response.text();
+
+                if (response.ok) {
+                    // Parse recommendations from HTML response
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(text, 'text/html');
+                    const recommendationsContent = doc.querySelector('#recommendationsList');
+
+                    if (recommendationsContent) {
+                        document.getElementById('recommendationsList').innerHTML = recommendationsContent.innerHTML;
+                    }
+
+                    clearInterval(stepInterval);
+                    showSection('recommendationsDisplay');
+                } else {
+                    showError('Failed to generate recommendations');
+                    clearInterval(stepInterval);
+                    showSection('resumeUpload');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+                clearInterval(stepInterval);
+                showSection('resumeUpload');
+            }
+        }
+
+        // Dashboard function
+        function showDashboard() {
+            // Optionally, fetch stats from the backend here
+            // For now, just show dummy data
+            document.getElementById('stat-careers').textContent = '5';
+            document.getElementById('stat-skills').textContent = '12';
+            document.getElementById('stat-completed').textContent = '1';
+            showSection('dashboardSection');
+        }
+
+        // Initialize tooltips and interactive elements
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Add input animations
+            document.querySelectorAll('input, select, textarea').forEach(input => {
+                input.addEventListener('focus', function () {
+                    this.parentElement.classList.add('focused');
+                });
+
+                input.addEventListener('blur', function () {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

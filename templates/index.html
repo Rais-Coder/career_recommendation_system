@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- HEADER SECTION -->
+    <header class="site-header">
+        <div class="header-brand">
+            <span class="header-logo"><i class="fas fa-chart-line"></i></span>
+            <span class="header-title">CareerAI</span>
+        </div>
+        <div class="header-subtitle">
+            AI-Powered Career Guidance System
+        </div>
+        <nav class="header-links">
+            <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a>
+            <a href="{{ url_for('dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="{{ url_for('get_recommendations') }}"><i class="fas fa-star"></i> Recommendations</a>
+            <a href="#"><i class="fas fa-headset"></i> Support</a>
+        </nav>
+    </header>
+    <!-- END HEADER SECTION -->
+
+    <div class="main-content">
+        <section class="hero-section">
+            <h1><i class="fas fa-chart-line"></i> Smart Career Recommendations</h1>
+            <p>AI-Powered Career Guidance System</p>
+        </section>
+
+        <section class="card get-started-section">
+            <h2><i class="fas fa-user-plus"></i> Get Started</h2>
+            <p>Tell us about yourself to receive personalized career recommendations</p>
+            <form id="userRegistration" method="POST" action="{{ url_for('register') }}" class="form-section grid">
+                <div class="form-group">
+                    <label for="full_name"><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="full_name" name="full_name" required placeholder="Enter your full name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label for="age"><i class="fas fa-calendar"></i> Age</label>
+                    <input type="number" id="age" name="age" min="15" max="100" required placeholder="Your age">
+                </div>
+
+                <div class="form-group">
+                    <label for="education_level"><i class="fas fa-graduation-cap"></i> Education Level</label>
+                    <select id="education_level" name="education_level" required>
+                        <option value="">Select Education Level</option>
+                        <option value="High School">High School</option>
+                        <option value="Diploma">Diploma</option>
+                        <option value="Associate Degree">Associate Degree</option>
+                        <option value="Bachelor's Degree">Bachelor's Degree</option>
+                        <option value="Master's Degree">Master's Degree</option>
+                        <option value="PhD">PhD</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="current_field"><i class="fas fa-briefcase"></i> Current Field (Optional)</label>
+                    <input type="text" id="current_field" name="current_field" placeholder="e.g., Software Development">
+                </div>
+
+                <div class="form-group">
+                    <label for="years_experience"><i class="fas fa-clock"></i> Years of Experience</label>
+                    <input type="number" id="years_experience" name="years_experience" min="0" max="50" placeholder="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="location"><i class="fas fa-map-marker-alt"></i> Location</label>
+                    <input type="text" id="location" name="location" required placeholder="City, Country">
+                </div>
+
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-arrow-right"></i> Continue to Assessment
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-links">
+        <a href="#">Help Center</a> &nbsp;|&nbsp;
+        <a href="#">Contact Us</a> &nbsp;|&nbsp;
+        <a href="#">Privacy Policy</a>
+    </div>
+    <div style="font-size: 0.95em; margin-top: 8px;">© 2025 Smart Career Recommendations. All rights reserved.</div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='main.js') }}"></script>
+{% endblock %}
+<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">

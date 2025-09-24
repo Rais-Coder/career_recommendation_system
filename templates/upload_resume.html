@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Resume - Smart Career Recommendations{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <section class="progress-section">
+        <div class="progress-steps">
+            <span class="step">1</span>
+            <span class="step">2</span>
+            <span class="step active">3</span>
+            <span class="step">4</span>
+        </div>
+    </section>
+
+    <section class="resume-upload-section">
+        <h2>Upload Your Resume</h2>
+        <p>Upload your resume to automatically extract your skills and experience</p>
+
+        <form id="resumeUploadForm" method="POST" action="/process_resume" enctype="multipart/form-data">
+            <input type="file" name="resume_file" id="resume_file" required>
+            <button type="submit" class="btn btn-primary">Upload Resume</button>
+            <div class="upload-status hidden">Uploading...</div>
+            <div class="extracted-skills hidden">
+                <h4>Extracted Skills:</h4>
+                <ul id="extracted-skills-list"></ul>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='main.js') }}"></script>
+<script>
+    // Define URLs using Jinja2
+    const assessmentUrl = "{{ url_for('assessment') }}";
+    const dashboardUrl = "{{ url_for('dashboard') }}";
+
+    // Attach event listeners
+    document.getElementById('backButton').addEventListener('click', () => {
+        window.location.href = assessmentUrl;
+    });
+    document.getElementById('skipButton').addEventListener('click', () => {
+        window.location.href = dashboardUrl;
+    });
+</script>
+{% endblock %}
+
+{% block upload_resume_process %}
+if 'resume_file' not in request.files:
+    return jsonify({'success': False, 'error': 'No file part in the request'})
+file = request.files['resume_file']
+{% endblock %}

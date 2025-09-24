@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Career Assessment - Smart Career Recommendations{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <section class="progress-section">
+        <div class="progress-steps">
+            <span class="step">1</span>
+            <span class="step active">2</span>
+            <span class="step">3</span>
+            <span class="step">4</span>
+        </div>
+    </section>
+
+    <section class="assessment-section">
+        <h2>Career Assessment</h2>
+        <p>Answer these questions to help us understand your preferences and goals</p>
+
+        <form id="careerAssessment" class="assessment-form" method="POST">
+            <div class="form-section">
+                <h3>Personality & Work Style</h3>
+                <div class="form-group">
+                    <label>I prefer working in teams rather than alone</label>
+                    <div class="slider-container">
+                        <span>Strongly Disagree</span>
+                        <input type="range" name="team_preference" min="1" max="5" value="3">
+                        <span>Strongly Agree</span>
+                    </div>
+                    <div class="slider-value">3</div>
+                </div>
+
+                <div class="form-group">
+                    <label>I enjoy taking on leadership responsibilities</label>
+                    <div class="slider-container">
+                        <span>Strongly Disagree</span>
+                        <input type="range" name="leadership_preference" min="1" max="5" value="3">
+                        <span>Strongly Agree</span>
+                    </div>
+                    <div class="slider-value">3</div>
+                </div>
+
+                <div class="form-group">
+                    <label>I like having clear structure and deadlines</label>
+                    <div class="slider-container">
+                        <span>Strongly Disagree</span>
+                        <input type="range" name="structure_preference" min="1" max="5" value="3">
+                        <span>Strongly Agree</span>
+                    </div>
+                    <div class="slider-value">3</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Interests & Aptitudes</h3>
+                <div class="form-group">
+                    <label>How interested are you in analyzing data and finding patterns?</label>
+                    <div class="slider-container">
+                        <span>Not Interested</span>
+                        <input type="range" name="data_analysis_interest" min="1" max="5" value="3">
+                        <span>Very Interested</span>
+                    </div>
+                    <div class="slider-value">3</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Do you enjoy creative problem-solving and innovation?</label>
+                    <div class="slider-container">
+                        <span>Not Interested</span>
+                        <input type="range" name="problem_solving_interest" min="1" max="5" value="3">
+                        <span>Very Interested</span>
+                    </div>
+                    <div class="slider-value">3</div>
+                </div>
+
+                <div class="form-group">
+                    <label>How much do you like helping and mentoring others?</label>
+                    <div class="slider-container">
+                        <span>Not Interested</span>
+                        <input type="range" name="mentoring_interest" min="1" max="5" value="3">
+                        <span>Very Interested</span>
+                    </div>
+                    <div class="slider-value">3</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Are you interested in building or creating things?</label>
+                    <div class="slider-container">
+                        <span>Not Interested</span>
+                        <input type="range" name="building_interest" min="1" max="5" value="3">
+                        <span>Very Interested</span>
+                    </div>
+                    <div class="slider-value">3</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Career Priorities</h3>
+                <div class="form-group">
+                    <label>How important is work-life balance to you?</label>
+                    <div class="slider-container">
+                        <span>Not Important</span>
+                        <input type="range" name="work_life_balance" min="1" max="5" value="3">
+                        <span>Very Important</span>
+                    </div>
+                    <div class="slider-value">3</div>
+                </div>
+
+                <div class="form-group">
+                    <label>How important is salary to you?</label>
+                    <div class="slider-container">
+                        <span>Not Important</span>
+                        <input type="range" name="salary_importance" min="1" max="5" value="3">
+                        <span>Very Important</span>
+                    </div>
+                    <div class="slider-value">3</div>
+                </div>
+
+                <div class="form-group">
+                    <label>How comfortable are you with taking risks?</label>
+                    <div class="slider-container">
+                        <span>Risk Averse</span>
+                        <input type="range" name="risk_tolerance" min="1" max="5" value="3">
+                        <span>Risk Taker</span>
+                    </div>
+                    <div class="slider-value">3</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Career Goals</h3>
+                <div class="form-group">
+                    <label>What are your main career goals? (Optional)</label>
+                    <textarea name="career_goals"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Select your areas of interest (check all that apply):</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="interests" value="Technology"> Technology</label>
+                        <label><input type="checkbox" name="interests" value="Business"> Business</label>
+                        <label><input type="checkbox" name="interests" value="Creative Arts"> Creative Arts</label>
+                        <label><input type="checkbox" name="interests" value="Healthcare"> Healthcare</label>
+                        <label><input type="checkbox" name="interests" value="Education"> Education</label>
+                        <label><input type="checkbox" name="interests" value="Finance"> Finance</label>
+                        <label><input type="checkbox" name="interests" value="Marketing"> Marketing</label>
+                        <label><input type="checkbox" name="interests" value="Research"> Research</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="backButton">Back</button>
+                <button type="submit" class="btn btn-primary">Continue to Resume Upload</button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='main.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const app = new CareerApp();
+        
+        // Back button functionality
+        document.getElementById('backButton').addEventListener('click', () => {
+            window.location.href = "{{ url_for('index') }}";
+        });
+    });
+</script>
+{% endblock %}

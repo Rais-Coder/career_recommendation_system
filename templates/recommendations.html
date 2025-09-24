@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Career Recommendations - Smart Career Recommendations{% endblock %}
+
+{% block content %}
+<div class="main-content recommendations-page">
+    <section class="recommendations-header">
+        <h1>Your Career Recommendations</h1>
+        <p>Personalized career suggestions based on your profile and skills</p>
+    </section>
+
+    <section class="filters-section">
+        <div class="filter-group">
+            <label for="industry_filter">Filter by Industry:</label>
+            <select id="industry_filter" name="industry_filter">
+                <option value="">All Industries</option>
+                <option value="Technology">Technology</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Finance">Finance</option>
+                <option value="Education">Education</option>
+                <option value="Marketing">Marketing</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="salary_filter">Minimum Salary:</label>
+            <select id="salary_filter" name="salary_filter">
+                <option value="">Any Salary</option>
+                <option value="50000">$50,000+</option>
+                <option value="75000">$75,000+</option>
+                <option value="100000">$100,000+</option>
+                <option value="125000">$125,000+</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="match_filter">Minimum Match Score:</label>
+            <select id="match_filter" name="match_filter">
+                <option value="">Any Match</option>
+                <option value="60">60%+</option>
+                <option value="70">70%+</option>
+                <option value="80">80%+</option>
+                <option value="90">90%+</option>
+            </select>
+        </div>
+    </section>
+
+    <section class="recommendations-list">
+        {% for rec in recommendations %}
+        <div class="recommendation-card" data-industry="{{ rec.industry }}" data-salary="{{ rec.avg_salary_min }}"
+            data-match="{{ rec.match_score }}">
+            <div class="rec-title-section">
+                <h3>{{ rec.career_title }}</h3>
+                <span class="match-score">{{ (rec.match_score * 100)|round }}% Match</span>
+            </div>
+            <p>{{ rec.industry }}</p>
+            <p>
+                ${{ "{:,}".format(rec.avg_salary_min|default(0)|int) if rec.avg_salary_min is defined and rec.avg_salary_min is not none else 'N/A' }}
+                -
+                ${{ "{:,}".format(rec.avg_salary_max|default(0)|int) if rec.avg_salary_max is defined and rec.avg_salary_max is not none else 'N/A' }}
+            </p>
+
+            <div class="rec-details">
+                <p>{{ rec.description }}</p>
+            </div>
+
+            <div class="rec-stats">
+                <div>
+                    <strong>Salary Range:</strong>
+                    ${{ "{:,}".format(rec.avg_salary_min|default(0)|int) if rec.avg_salary_min is defined and rec.avg_salary_min is not none else 'N/A' }}
+                    -
+                    ${{ "{:,}".format(rec.avg_salary_max|default(0)|int) if rec.avg_salary_max is defined and rec.avg_salary_max is not none else 'N/A' }}
+                </div>
+                <div>
+                    <strong>Growth Rate:</strong> {{ (rec.growth_rate * 100)|round }}% annually
+                </div>
+                <div>
+                    <strong>Market Demand:</strong> {{ 'High' if rec.demand_score > 0.7 else 'Medium' if
+                    rec.demand_score > 0.4 else 'Low' }}
+                </div>
+            </div>
+
+            <div class="match-breakdown">
+                <h4>Match Breakdown</h4>
+                <div>
+                    <span>Skills Match</span>
+                    <div class="progress-bar">
+                        <div style="width: {{ (rec.skill_score * 100)|round }}%;"></div>
+                    </div>
+                    <span>{{ (rec.skill_score * 100)|round }}%</span>
+                </div>
+                <div>
+                    <span>Education Fit</span>
+                    <div class="progress-bar">
+                        <div style="width: {{ (rec.education_score * 100)|round }}%;"></div>
+                    </div>
+                    <span>{{ (rec.education_score * 100)|round }}%</span>
+                </div>
+                <div>
+                    <span>Experience Level</span>
+                    <div class="progress-bar">
+                        <div style="width: {{ (rec.experience_score * 100)|round }}%;"></div>
+                    </div>
+                    <span>{{ (rec.experience_score * 100)|round }}%</span>
+                </div>
+            </div>
+
+            {% if rec.skill_gaps %}
+            <div class="skill-gaps">
+                <h4>Skills to Develop</h4>
+                <ul>
+                    {% for gap in rec.skill_gaps[:5] %}
+                    <li>{{ gap }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if rec.learning_path %}
+            <div class="learning-path">
+                <h4>Learning Path</h4>
+                <div class="learning-steps">
+                    {% for step in rec.learning_path[:3] %}
+                    <div class="learning-step">
+                        <span class="step-number">{{ step.priority }}</span>
+                        <div>
+                            <strong>{{ step.skill }}</strong>
+                            <p>Current: {{ step.current_level }}/5 → Target: {{ step.required_level }}/5</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="rec-reasoning">
+                <h4>Why This Match?</h4>
+                <p>{{ rec.reasoning }}</p>
+            </div>
+
+            <div class="rec-actions">
+                <button class="btn btn-primary explore-career" data-career-id="{{ rec.career_id }}">Explore
+                    Career</button>
+                <button class="btn btn-secondary">View Learning Path</button>
+                <button class="btn btn-secondary">Find Jobs</button>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if not recommendations %}
+        <div class="no-recommendations">
+            <p>No Recommendations Found</p>
+            <p>We couldn't generate recommendations. Please complete your profile assessment.</p>
+            <a href="{{ url_for('assessment') }}" class="btn btn-primary">Complete Assessment</a>
+        </div>
+        {% endif %}
+    </section>
+
+    <div class="form-actions">
+        <button class="btn btn-secondary" onclick="window.location.href='{{ url_for('index') }}'">Start Over</button>
+        <button class="btn btn-primary" onclick="window.location.href='{{ url_for('dashboard') }}'">View Dashboard</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const app = new CareerApp();
+    });
+</script>
+{% endblock %}

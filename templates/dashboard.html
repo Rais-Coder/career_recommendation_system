@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Smart Career Recommendations{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="header">
+        <h1>Welcome back, {{ user.name }}!</h1>
+        <p>Here's your career development overview</p>
+    </div>
+
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <div class="stat-number">{{ skills|length }}</div>
+            <div class="stat-label">Skills Identified</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ recommendations|length }}</div>
+            <div class="stat-label">Career Matches</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ user.education_level or 'Not Set' }}</div>
+            <div class="stat-label">Education Level</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ user.years_experience or 0 }}</div>
+            <div class="stat-label">Years Experience</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Your Skills</h2>
+        <div>
+            {% for skill in skills[:10] %}
+            <span class="skill-tag">{{ skill.skill_name }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Top Career Matches</h2>
+        <div>
+            {% for rec in recommendations[:3] %}
+            <div class="recommendation-card">
+                <div class="rec-title-section">
+                    <h3>{{ rec.career_title }}</h3>
+                    <span class="match-score">{{ (rec.match_score * 100)|round }}% Match</span>
+                </div>
+                <p>{{ rec.industry }}</p>
+                <p>
+                    ${{ '{:,}'.format(rec.avg_salary_min|int) if rec.avg_salary_min is not none else 'N/A' }} -
+                    ${{ '{:,}'.format(rec.avg_salary_max|int) if rec.avg_salary_max is not none else 'N/A' }}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('get_recommendations') }}" class="btn btn-secondary">View All Recommendations</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const app = new CareerApp();
+    });
+</script>
+{% endblock %}
